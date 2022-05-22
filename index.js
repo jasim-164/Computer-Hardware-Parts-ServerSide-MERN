@@ -23,6 +23,16 @@ async function run() {
     try{
         await client.connect();
         const hardwareCollection = client.db("computer-hardware-parts").collection("hardware-collection");
+
+
+        app.get('/services',async(req, res) => {
+            const query={};
+            const cursor = hardwareCollection.find(query);
+            const services =await cursor.toArray();
+            res.send(services);
+
+
+        })
     }
     finally{
 
