@@ -61,7 +61,7 @@ async function run() {
       })
         app.post('/reviews',async(req, res) => {
           const review=req.body;
-          const result = reviewCollection.insertOne(review);
+          const result =await reviewCollection.insertOne(review);
           res.send(result);
       })
         app.put('/user/:email', async (req, res) => {
