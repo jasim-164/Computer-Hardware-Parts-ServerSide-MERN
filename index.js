@@ -38,6 +38,7 @@ async function run() {
         await client.connect();
         const hardwareCollection = client.db("computer-hardware-parts").collection("hardware-collection");
         const userCollection = client.db('computer-hardware-parts').collection('users');
+        const reviewCollection = client.db('computer-hardware-parts').collection('reviews');
 
 
         app.get('/products',async(req, res) => {
@@ -52,6 +53,12 @@ async function run() {
             //const  =await result.toArray();
             res.send(result);
         })
+        app.get('/reviews',async(req, res) => {
+          const query={};
+          const cursor = reviewCollection.find(query);
+          const reviews =await cursor.toArray();
+          res.send(reviews);
+      })
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
