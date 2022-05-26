@@ -47,12 +47,26 @@ async function run() {
             const services =await cursor.toArray();
             res.send(services);
         })
+        app.get('/products/:id',async(req, res) => {
+            const id=req.params.id;
+            const query={_id: id}
+            const cursor = await hardwareCollection.findOne(query);
+            // const services =await cursor.toArray();
+            res.send(cursor);
+        })
         app.post('/products',async(req, res) => {
             const product=req.body;
             const result = await hardwareCollection.insertOne(product);
             //const  =await result.toArray();
             res.send(result);
         })
+        app.delete('/products/:id',async(req, res) => {
+          const id=req.params.id;
+          const query={_id:id}
+          const result = await hardwareCollection.deleteOne(query);
+          //const  =await result.toArray();
+          res.send(result);
+      })
         app.get('/reviews',async(req, res) => {
           const query={};
           const cursor = reviewCollection.find(query);
@@ -63,6 +77,25 @@ async function run() {
           const review=req.body;
           const result =await reviewCollection.insertOne(review);
           res.send(result);
+      })
+
+      app.get('/user/:email',async(req, res) =>{
+        const query={};
+        const email = req.params.email;
+        const filter = { email: email };
+        const cursor = await userCollection.findOne(filter);
+        // const user =await cursor.toArray();
+        res.send(cursor);
+       
+
+      })
+      app.get('/user',async(req, res) =>{
+        const query={};
+        const cursor =  userCollection.find(query);
+        const users =await cursor.toArray();
+        res.send(users);
+        console.log("user collection")
+
       })
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
@@ -76,6 +109,26 @@ async function run() {
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.send({ result, token });
           });
+
+
+          //admin
+          app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+          })
+          app.put('/user/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            console.log("admin",email);
+            const filter = { email: email };
+            const updateDoc = {
+              $set: { role: 'admin' },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result);
+          })
+
     }
     finally{
 
