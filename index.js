@@ -39,6 +39,8 @@ async function run() {
         const hardwareCollection = client.db("computer-hardware-parts").collection("hardware-collection");
         const userCollection = client.db('computer-hardware-parts').collection('users');
         const reviewCollection = client.db('computer-hardware-parts').collection('reviews');
+        const bookingCollection = client.db('computer-hardware-parts').collection('bookings');
+        const paymentCollection = client.db('computer-hardware-parts').collection('payments');
 
 
         app.get('/products',async(req, res) => {
@@ -128,6 +130,36 @@ async function run() {
             const result = await userCollection.updateOne(filter, updateDoc);
             res.send(result);
           })
+
+          app.post('/booking', async (req, res) => {
+            const booking = req.body;
+            // const query = { treatment: booking.treatment, date: booking.date, patient: booking.patient }
+            // const exists = await bookingCollection.findOne(query);
+            // if (exists) {
+            //   return res.send({ success: false, booking: exists })
+            // }
+            const result = await bookingCollection.insertOne(booking);
+            
+           
+            return res.send({ success: true, result });
+          });
+          app.get('/booking', async (req, res) => {
+            // const booking = {};
+            // // const query = { treatment: booking.treatment, date: booking.date, patient: booking.patient }
+            // // const exists = await bookingCollection.findOne(query);
+            // // if (exists) {
+            // //   return res.send({ success: false, booking: exists })
+            // // }
+            // const result =  bookingCollection.find(booking);
+            // const bookings = await result.toArray();
+            
+           
+            // res.send(bookings);
+            const query = { };
+            const bookings = await bookingCollection.find(query).toArray();
+            console.log(bookings)
+            return res.send(bookings);
+          });
 
     }
     finally{
